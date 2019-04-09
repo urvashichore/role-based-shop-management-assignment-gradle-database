@@ -1,0 +1,102 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/mvc
+                http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<context:property-placeholder location="classpath:database.properties" />
+    <context:component-scan base-package="smgmt"/>
+
+	
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/pages/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+    
+
+    <!-- Application entry point which will redirect to login if user is not authenticated -->
+    <bean id="appAuthenticationEntryPoint" class="smgmt.entrypoint.AppAuthenticationEntryPoint">
+        <constructor-arg name="loginFormUrl" value="/services/login"/>
+    </bean>
+
+    <!-- if user authentication is successful then AppSuccessHandler will redirect to page based on role-->
+    <bean id="successHandler" class="smgmt.handler.AppSuccessHandler"/>
+
+    <!-- if user authentication is unsuccessful then failureHandler will redirect to access denied page-->
+    <bean id="failureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+        <constructor-arg name="defaultFailureUrl" value="/services/accessdenied"/>
+    </bean>
+    
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+ 		<property name="driverClassName" value="${database.driver}" />
+ 		<property name="url" value="${database.url}" />
+ 		<property name="username" value="${database.user}" />
+	    <property name="password" value="${database.password}" />
+	</bean>
+	
+	<bean id="sessionFactory"
+  		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+  		<property name="dataSource" ref="dataSource" />
+  		<property name="hibernateProperties">
+   		<props>
+    		<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+    		<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+    		<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>    
+   		</props>
+  		</property>
+ 	</bean>
+
+    <security:http pattern="/services/login" security="none"/>
+    <security:http pattern="/services/accessdenied" security="none"/>
+    <security:http auto-config="true" use-expressions="true" entry-point-ref="appAuthenticationEntryPoint">
+        <!-- Interceptor urls -->
+        <security:intercept-url pattern="/" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/user**" access="hasRole('USER')" />
+        <security:intercept-url pattern="/admin**" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/billinguser**" access="hasRole('BILLINGUSER')" />  
+        
+
+        <security:form-login login-page="/login"
+                             login-processing-url="/j_spring_security_check"
+                             authentication-success-handler-ref="successHandler"
+                             authentication-failure-handler-ref="failureHandler"
+                             username-parameter="username"
+                             password-parameter="password"
+                />
+
+        <!-- disabling csrf protection -->
+        <security:csrf disabled="true"/>
+    </security:http>
+
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider>
+            <!-- <security:user-service> -->
+               <!--  <security:user name="user" password="{noop}user" authorities="ROLE_USER" />
+                <security:user name="admin" password="{noop}admin" authorities="ROLE_ADMIN" /> -->
+            <!--     <security:user name="billinguser" password="{noop}billinguser" authorities="ROLE_BILLINGUSER" />
+            </security:user-service> -->
+            <security:jdbc-user-service data-source-ref="dataSource"
+    			 users-by-username-query="select username, password, active from users where username=?"
+         		 authorities-by-username-query="select us.username, ur.authority from users us, user_roles ur
+      			 where us.userid = ur.userid and us.username =?  "
+      		/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>

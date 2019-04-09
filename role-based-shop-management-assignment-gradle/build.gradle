@@ -1,0 +1,72 @@
+
+plugins {
+    id 'java'
+	id 'war'
+}
+
+repositories {
+    mavenCentral()
+    
+}
+
+//apply plugin: 'io.spring.dependency-management'
+
+dependencies {
+
+	// https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+	compile group: 'org.springframework', name: 'spring-jdbc', version: '5.1.5.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.2.Final'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-tx
+	compile group: 'org.springframework', name: 'spring-tx', version: '5.1.6.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-orm
+compile group: 'org.springframework', name: 'spring-orm', version: '5.1.6.RELEASE'
+
+	
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager
+	compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.4.2.Final'
+	
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-core
+	compile group: 'org.springframework', name: 'spring-core', version: '5.1.5.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+	compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.5.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-web
+	compile group: 'org.springframework', name: 'spring-web', version: '5.1.5.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework/spring-orm
+	compile group: 'org.springframework', name: 'spring-orm', version: '5.1.5.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
+	compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.1.4.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-web
+	compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.1.4.RELEASE'
+	
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-config
+	compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.1.4.RELEASE'
+	
+	// https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl
+	// https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl
+	// https://mvnrepository.com/artifact/javax.servlet/jstl
+	compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+
+
+	
+	// https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+	compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+	
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+		
+}
+
+group = 'com.spring.security'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
